@@ -167,7 +167,7 @@
     const isSelectedEnd = selected && value && date.compare(value.end) === 0;
 
     return cn(
-      "relative w-12 h-10 text-center text-sm transition-colors",
+      "relative w-11 h-11 text-center text-sm transition-colors",
       // Selected takes priority - always show with selected text
       selected && "bg-[var(--calendar-selected)] text-[var(--calendar-selected-text)]",
       // Then hover (not selected)
@@ -226,12 +226,12 @@
         </Calendar.NextButton>
       </Calendar.Header>
 
-      <Calendar.Grid class="border-collapse gap-1">
+      <Calendar.Grid class="border-collapse gap-0.5">
         <Calendar.GridHead>
           <Calendar.GridRow>
             {#each ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as day}
               <Calendar.HeadCell
-                class="w-12 h-10 text-center text-xs font-medium text-[var(--calendar-muted)]"
+                class="w-11 h-11 text-center text-xs font-medium text-[var(--calendar-muted)]"
               >
                 {day}
               </Calendar.HeadCell>

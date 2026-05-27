@@ -83,7 +83,7 @@
     const disabled = isMonthDisabled(month);
 
     return cn(
-      "flex-1 h-10 flex items-center justify-center text-sm rounded transition-colors",
+      "w-14 h-11 flex items-center justify-center text-sm rounded transition-colors",
       // Selected takes priority - always show with selected text regardless of disabled
       selected && "bg-[var(--calendar-selected)] text-[var(--calendar-selected-text)]",
       // Then disabled (not selected)
@@ -135,9 +135,9 @@
       >
         <span class="text-xs">›</span>
       </button>
-</div>
+    </div>
 
-    <div class="flex flex-wrap gap-1 justify-between">
+    <div class="grid grid-cols-4 gap-2">
       {#each months as monthName, i}
         {@const month = i + 1}
         {@const disabled = isMonthDisabled(month)}
