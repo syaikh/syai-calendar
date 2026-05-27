@@ -22,7 +22,7 @@
 
   let year = $state(new Date().getFullYear());
   let hoverMonth: number | null = $state(null);
-  let showNextYear = $state(false);
+  let hoverYear: number = $state(0);
 
   const today = new CalendarDate(
     new Date().getFullYear(),
@@ -42,23 +42,18 @@
     return { start: monthStart, end: monthEnd };
   };
 
-  const toTimestamp = (date: DateValue): number => {
-    return Date.UTC(date.year, date.month - 1, date.day);
-  };
-
   const isMonthSelected = (year: number, month: number): boolean => {
     if (!value) return false;
-    const range = getMonthRange(year, month);
-    const rangeStart = toTimestamp(range.start);
-    const rangeEnd = toTimestamp(range.end);
-    const valueStart = toTimestamp(value.start);
-    const valueEnd = toTimestamp(value.end);
-    return rangeStart >= valueStart && rangeEnd <= valueEnd;
+    const monthStart = new CalendarDate(year, month, 1);
+    const nextMonth = monthStart.add({ months: 1 });
+    const monthEnd = nextMonth.subtract({ days: 1 });
+    // Check if month overlaps with selected range (partial selection support)
+    return monthStart.compare(value.end) <= 0 && monthEnd.compare(value.start) >= 0;
   };
 
   const isMonthInHover = (year: number, month: number): boolean => {
     if (hoverMonth === null) return false;
-    return hoverMonth === month;
+    return hoverMonth === month && hoverYear === year;
   };
 
   const isCurrentMonth = (month: number): boolean => {
@@ -73,10 +68,12 @@
 
   const handleMouseEnter = (month: number) => {
     hoverMonth = month;
+    hoverYear = year;
   };
 
   const handleMouseLeave = () => {
     hoverMonth = null;
+    hoverYear = 0;
   };
 
   const getMonthClass = (year: number, month: number) => {
@@ -87,8 +84,12 @@
 
     return cn(
       "w-16 h-12 m-1 flex items-center justify-center text-sm rounded transition-colors",
-      disabled ? "text-[var(--calendar-muted)] opacity-40 cursor-not-allowed" : "text-[var(--calendar-text)]",
+      // Selected takes priority - always show with selected text regardless of disabled
       selected && "bg-[var(--calendar-selected)] text-[var(--calendar-selected-text)]",
+      // Then disabled (not selected)
+      disabled && !selected && "text-[var(--calendar-muted)] opacity-40 cursor-not-allowed",
+      !disabled && !selected && "text-[var(--calendar-text)]",
+      // Then hover (not selected or disabled)
       hover && !selected && !disabled && "bg-[var(--calendar-hover)]",
       current && !selected && !disabled && "ring-2 ring-[var(--calendar-today-border)] ring-offset-1"
     );
@@ -96,16 +97,15 @@
 
   const isMonthDisabled = (month: number): boolean => {
     const monthStart = new CalendarDate(year, month, 1);
-    const monthEnd = new CalendarDate(year, month, 28);
-    
+
     if (minValue) {
-      if (monthStart.year < minValue.year || 
+      if (monthStart.year < minValue.year ||
           (monthStart.year === minValue.year && monthStart.month < minValue.month)) {
         return true;
       }
     }
     if (maxValue) {
-      if (monthStart.year > maxValue.year || 
+      if (monthStart.year > maxValue.year ||
           (monthStart.year === maxValue.year && monthStart.month > maxValue.month)) {
         return true;
       }
@@ -141,15 +141,15 @@
       {#each months as monthName, i}
         {@const month = i + 1}
         {@const disabled = isMonthDisabled(month)}
-<button
-           class={getMonthClass(year, month)}
-           disabled={disabled}
-           onmouseenter={() => !disabled && handleMouseEnter(month)}
-           onmouseleave={() => handleMouseLeave()}
-           onclick={() => handleMonthClick(month)}
-         >
-           {monthName}
-         </button>
+        <button
+          class={getMonthClass(year, month)}
+          disabled={disabled}
+          onmouseenter={() => !disabled && handleMouseEnter(month)}
+          onmouseleave={() => handleMouseLeave()}
+          onclick={() => handleMonthClick(month)}
+        >
+          {monthName}
+        </button>
       {/each}
     </div>
   </div>

@@ -39,18 +39,12 @@
     };
   };
 
-  const toTimestamp = (date: DateValue): number => {
-    return Date.UTC(date.year, date.month - 1, date.day);
-  };
-
   const isYearSelected = (year: number): boolean => {
     if (!value) return false;
-    const range = getYearRange(year);
-    const rangeStart = toTimestamp(range.start);
-    const rangeEnd = toTimestamp(range.end);
-    const valueStart = toTimestamp(value.start);
-    const valueEnd = toTimestamp(value.end);
-    return rangeStart >= valueStart && rangeEnd <= valueEnd;
+    const yearStart = new CalendarDate(year, 1, 1);
+    const yearEnd = new CalendarDate(year, 12, 31);
+    // Check if year overlaps with selected range (partial selection support)
+    return yearStart.compare(value.end) <= 0 && yearEnd.compare(value.start) >= 0;
   };
 
   const isYearDisabled = (year: number): boolean => {
@@ -88,8 +82,12 @@
 
     return cn(
       "w-16 h-12 m-1 flex items-center justify-center text-sm rounded transition-colors",
-      disabled ? "text-[var(--calendar-muted)] opacity-40 cursor-not-allowed" : "text-[var(--calendar-text)]",
+      // Selected takes priority - always show with selected text regardless of disabled
       selected && "bg-[var(--calendar-selected)] text-[var(--calendar-selected-text)]",
+      // Then disabled (not selected)
+      disabled && !selected && "text-[var(--calendar-muted)] opacity-40 cursor-not-allowed",
+      !disabled && !selected && "text-[var(--calendar-text)]",
+      // Then hover (not selected or disabled)
       hover && !selected && !disabled && "bg-[var(--calendar-hover)]",
       current && !selected && !disabled && "ring-2 ring-[var(--calendar-today-border)] ring-offset-1"
     );
@@ -122,15 +120,15 @@
     <div class="grid grid-cols-5 gap-1">
       {#each years as year}
         {@const disabled = isYearDisabled(year)}
-<button
-           class={getYearClass(year)}
-           {disabled}
-           onmouseenter={() => !disabled && (hoverYear = year)}
-           onmouseleave={() => (hoverYear = null)}
-           onclick={() => handleYearClick(year)}
-         >
-           {year}
-         </button>
+        <button
+          class={getYearClass(year)}
+          {disabled}
+          onmouseenter={() => !disabled && (hoverYear = year)}
+          onmouseleave={() => (hoverYear = null)}
+          onclick={() => handleYearClick(year)}
+        >
+          {year}
+        </button>
       {/each}
     </div>
   </div>

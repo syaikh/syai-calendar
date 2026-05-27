@@ -20,7 +20,10 @@
 
   const minValue = today.subtract({ days: 27 });
   const monthMinValue = new CalendarDate(2026, 2, 1);
-  const monthMaxValue = new CalendarDate(today.year, today.month, 1);
+  const monthMaxValue = (() => {
+    const firstOfNextMonth = new CalendarDate(today.year, today.month, 1).add({ months: 1 });
+    return firstOfNextMonth.subtract({ days: 1 });
+  })();
   const yearMaxValue = new CalendarDate(today.year, 12, 31);
   const yearMinValue = new CalendarDate(2020, 1, 1);
 
@@ -93,27 +96,27 @@
         {theme}
       />
     </div>
-{:else if viewMode === "month"}
-     <div class="calendar-container">
-       <MonthlyCalendar
-         value={selectedRange}
-         onValueChange={handleValueChange}
-         minValue={monthMinValue}
-         maxValue={monthMaxValue}
-         {theme}
-       />
-     </div>
-   {:else}
-     <div class="calendar-container">
-       <YearCalendar
-         value={selectedRange}
-         onValueChange={handleValueChange}
-         minValue={yearMinValue}
-         maxValue={yearMaxValue}
-         {theme}
-       />
-     </div>
-   {/if}
+  {:else if viewMode === "month"}
+    <div class="calendar-container">
+      <MonthlyCalendar
+        value={selectedRange}
+        onValueChange={handleValueChange}
+        minValue={monthMinValue}
+        maxValue={monthMaxValue}
+        {theme}
+      />
+    </div>
+  {:else}
+    <div class="calendar-container">
+      <YearCalendar
+        value={selectedRange}
+        onValueChange={handleValueChange}
+        minValue={yearMinValue}
+        maxValue={yearMaxValue}
+        {theme}
+      />
+    </div>
+  {/if}
 
   {#if selectedRange}
     <div class="selected-info">
@@ -191,4 +194,3 @@
     color: var(--accent, #0ea5e9);
   }
 </style>
-
