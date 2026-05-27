@@ -49,6 +49,11 @@
 
   const isDateInSelectedRange = (date: DateValue): boolean => {
     if (!value) return false;
+    // In day mode, only exact single day selection is valid
+    if (mode === "day") {
+      return date.compare(value.start) === 0 && date.compare(value.end) === 0;
+    }
+    // In week mode, highlight all dates within the selected week range
     // Use CalendarDate comparison for reliable date matching
     if (date.compare(value.start) < 0 || date.compare(value.end) > 0) return false;
     return true;
@@ -68,10 +73,6 @@
       date.month === today.month &&
       date.day === today.day
     );
-  };
-
-  const isDateInCurrentMonth = (date: DateValue): boolean => {
-    return date.year === today.year && date.month === today.month;
   };
 
   const effectiveMaxValue = $derived(maxValue ?? (mode === "day" ? today : undefined));
@@ -134,11 +135,11 @@
     hoverDate = null;
   };
 
-  const getDayClass = (date: DateValue) => {
+  const getDayClass = (date: DateValue, currentMonth?: { year: number; month: number }) => {
     const selected = isDateInSelectedRange(date);
     const hover = isDateInHoverRange(date);
     const todayFlag = isToday(date);
-    const inCurrentMonth = isDateInCurrentMonth(date);
+    const inCurrentMonth = currentMonth ? date.year === currentMonth.year && date.month === currentMonth.month : date.year === today.year && date.month === today.month;
     const disabled = isDateDisabled(date);
 
     return cn(
@@ -214,17 +215,17 @@
             {#each month.weeks as week}
               <Calendar.GridRow>
                 {#each week as date}
-{@const todayFlag = isToday(date)}
-                    <Calendar.Cell
-                      {date}
-                      month={month.value}
-                      class={getDayClass(date)}
-                      onmouseenter={() => handleMouseEnter(date)}
-                      onmouseleave={handleMouseLeave}
-                      onclick={() => handleDayClick(date)}
-                    >
-                      <span class={cn(todayFlag && "font-bold")}>{date.day}</span>
-                    </Calendar.Cell>
+                  {@const todayFlag = isToday(date)}
+                  <Calendar.Cell
+                    {date}
+                    month={month.value}
+                    class={getDayClass(date, month.value)}
+                    onmouseenter={() => handleMouseEnter(date)}
+                    onmouseleave={handleMouseLeave}
+                    onclick={() => handleDayClick(date)}
+                  >
+                    <span class={cn(todayFlag && "font-bold")}>{date.day}</span>
+                  </Calendar.Cell>
                 {/each}
               </Calendar.GridRow>
             {/each}
