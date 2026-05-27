@@ -198,7 +198,7 @@
   );
 </script>
 
-<div class={cn("inline-block", className)}>
+<div class={cn("inline-block w-72", className)}>
   <Calendar.Root
     type="single"
     value={value?.start ?? defaultValue()}
@@ -207,7 +207,7 @@
     maxValue={maxValue ?? defaultMaxValue}
     disabled={false}
     weekStartsOn={1}
-    class="p-4 rounded-lg"
+    class="p-4 rounded-lg w-full"
     style={getThemeStyle(theme)}
     disableDaysOutsideMonth={false}
   >

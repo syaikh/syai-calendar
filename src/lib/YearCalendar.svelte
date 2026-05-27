@@ -94,9 +94,9 @@
   };
 </script>
 
-<div class={cn("inline-block", className)}>
+<div class={cn("inline-block w-72", className)}>
   <div
-    class="p-4 rounded-lg"
+    class="p-4 rounded-lg w-full"
     style={getThemeStyle(theme)}
   >
     <div class="flex items-center justify-between mb-3">
