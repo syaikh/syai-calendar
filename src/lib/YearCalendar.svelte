@@ -81,7 +81,7 @@
     const disabled = isYearDisabled(year);
 
     return cn(
-      "w-12 h-10 m-1 flex items-center justify-center text-sm rounded transition-colors",
+      "flex-1 h-10 flex items-center justify-center text-sm rounded transition-colors",
       // Selected takes priority - always show with selected text regardless of disabled
       selected && "bg-[var(--calendar-selected)] text-[var(--calendar-selected-text)]",
       // Then disabled (not selected)
@@ -96,7 +96,7 @@
 
 <div class={cn("inline-block w-72", className)}>
   <div
-    class="p-4 rounded-lg w-full"
+    class="p-4 rounded-lg w-full h-80 flex flex-col"
     style={getThemeStyle(theme)}
   >
     <div class="flex items-center justify-between mb-3">
@@ -115,9 +115,9 @@
       >
         <span class="text-xs">›</span>
       </button>
-    </div>
+</div>
 
-    <div class="grid grid-cols-5 gap-1">
+    <div class="flex flex-wrap gap-1 justify-between">
       {#each years as year}
         {@const disabled = isYearDisabled(year)}
         <button

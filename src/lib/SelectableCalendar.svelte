@@ -207,7 +207,7 @@
     maxValue={maxValue ?? defaultMaxValue}
     disabled={false}
     weekStartsOn={1}
-    class="p-4 rounded-lg w-full"
+    class="p-4 rounded-lg w-full min-h-80"
     style={getThemeStyle(theme)}
     disableDaysOutsideMonth={false}
   >
