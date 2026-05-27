@@ -2,9 +2,9 @@
   import SelectableCalendar from "./lib/SelectableCalendar.svelte";
   import MonthlyCalendar from "./lib/MonthlyCalendar.svelte";
   import YearCalendar from "./lib/YearCalendar.svelte";
-  import { CalendarDate } from "@internationalized/date";
+  import { CalendarDate, type DateValue } from "@internationalized/date";
 
-  let selectedRange: { start: CalendarDate; end: CalendarDate } | null = $state(null);
+  let selectedRange: { start: DateValue; end: DateValue } | null = $state(null);
   let mode: "day" | "week" = $state("week");
   let viewMode: "date" | "month" | "year" = $state("date");
 
@@ -60,7 +60,7 @@
     }
   };
 
-  const handleValueChange = (value: { start: CalendarDate; end: CalendarDate } | null) => {
+  const handleValueChange = (value: { start: DateValue; end: DateValue } | null) => {
     selectedRange = value;
   };
 

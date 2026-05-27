@@ -67,6 +67,24 @@
     return true;
   };
 
+  const getHoverRange = (): { start: DateValue; end: DateValue } | null => {
+    if (!hoverDate) return null;
+    if (mode === "week") {
+      return getWeekRange(hoverDate);
+    }
+    return { start: hoverDate, end: hoverDate };
+  };
+
+  const isHoverStartDate = (date: DateValue): boolean => {
+    const range = getHoverRange();
+    return range ? date.compare(range.start) === 0 : false;
+  };
+
+  const isHoverEndDate = (date: DateValue): boolean => {
+    const range = getHoverRange();
+    return range ? date.compare(range.end) === 0 : false;
+  };
+
   const isToday = (date: DateValue): boolean => {
     return (
       date.year === today.year &&
@@ -141,20 +159,31 @@
     const todayFlag = isToday(date);
     const inCurrentMonth = currentMonth ? date.year === currentMonth.year && date.month === currentMonth.month : date.year === today.year && date.month === today.month;
     const disabled = isDateDisabled(date);
+    
+    // For week mode, check if this is start/end of hover/selection range
+    const isHoverStart = hover && isHoverStartDate(date);
+    const isHoverEnd = hover && isHoverEndDate(date);
+    const isSelectedStart = selected && value && date.compare(value.start) === 0;
+    const isSelectedEnd = selected && value && date.compare(value.end) === 0;
 
     return cn(
-      "relative w-8 h-8 text-center text-sm rounded transition-colors",
+      "relative w-8 h-8 text-center text-sm transition-colors",
       // Selected takes priority - always show with selected text
       selected && "bg-[var(--calendar-selected)] text-[var(--calendar-selected-text)]",
       // Then hover (not selected)
       hover && !selected && "bg-[var(--calendar-hover)] text-[var(--calendar-text)]",
       // Then disabled (not selected or hover)
-      disabled && !selected && "text-[var(--calendar-muted)] opacity-40 cursor-not-allowed",
+      disabled && !selected && !hover && "text-[var(--calendar-muted)] opacity-40 cursor-not-allowed",
       // Then current month
       (!selected && !hover && !disabled && inCurrentMonth) && "text-[var(--calendar-text)]",
       // Then other months
       (!selected && !hover && !disabled && !inCurrentMonth) && "text-[var(--calendar-muted)] opacity-60",
-      todayFlag && !selected && !disabled && "ring-2 ring-[var(--calendar-today-border)] ring-offset-1"
+      todayFlag && !selected && !disabled && !hover && "ring-2 ring-[var(--calendar-today-border)] ring-offset-1",
+      // Border radius for week selections and hover
+      selected && isSelectedStart && "rounded-l-md",
+      selected && isSelectedEnd && "rounded-r-md",
+      hover && isHoverStart && "rounded-l-md",
+      hover && isHoverEnd && "rounded-r-md"
     );
   };
 
