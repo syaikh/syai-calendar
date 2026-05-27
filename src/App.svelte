@@ -8,15 +8,53 @@
   let mode: "day" | "week" = $state("week");
   let viewMode: "date" | "month" | "year" = $state("date");
 
-  const handleValueChange = (value: { start: any; end: any } | null) => {
-    selectedRange = value;
-  };
-
   const today = new CalendarDate(
     new Date().getFullYear(),
     new Date().getMonth() + 1,
     new Date().getDate(),
   );
+
+  const getWeekRange = (date: CalendarDate): { start: CalendarDate; end: CalendarDate } => {
+    const jsDate = new Date(date.year, date.month - 1, date.day);
+    const dayOfWeek = jsDate.getDay();
+    const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    const weekStart = date.subtract({ days: daysToMonday });
+    const weekEnd = weekStart.add({ days: 6 });
+    return { start: weekStart, end: weekEnd };
+  };
+
+  const getMonthRange = (year: number, month: number): { start: CalendarDate; end: CalendarDate } => {
+    const monthStart = new CalendarDate(year, month, 1);
+    const nextMonth = monthStart.add({ months: 1 });
+    const monthEnd = nextMonth.subtract({ days: 1 });
+    return { start: monthStart, end: monthEnd };
+  };
+
+  const getYearRange = (year: number): { start: CalendarDate; end: CalendarDate } => {
+    return { start: new CalendarDate(year, 1, 1), end: new CalendarDate(year, 12, 31) };
+  };
+
+  const handleViewChange = (newViewMode: "date" | "month" | "year") => {
+    viewMode = newViewMode;
+    if (viewMode === "date") {
+      selectedRange = mode === "day" ? { start: today, end: today } : getWeekRange(today);
+    } else if (viewMode === "month") {
+      selectedRange = getMonthRange(today.year, today.month);
+    } else if (viewMode === "year") {
+      selectedRange = getYearRange(today.year);
+    }
+  };
+
+  const handleModeChange = (newMode: "day" | "week") => {
+    mode = newMode;
+    if (viewMode === "date") {
+      selectedRange = mode === "day" ? { start: today, end: today } : getWeekRange(today);
+    }
+  };
+
+  const handleValueChange = (value: { start: CalendarDate; end: CalendarDate } | null) => {
+    selectedRange = value;
+  };
 
   const minValue = today.subtract({ days: 27 });
   const monthMinValue = new CalendarDate(2026, 2, 1);
@@ -58,19 +96,19 @@
   <div class="view-toggle">
     <button
       class:selected={viewMode === "date"}
-      onclick={() => (viewMode = "date")}
+      onclick={() => handleViewChange("date")}
     >
       Date View
     </button>
     <button
       class:selected={viewMode === "month"}
-      onclick={() => (viewMode = "month")}
+      onclick={() => handleViewChange("month")}
     >
       Month View
     </button>
     <button
       class:selected={viewMode === "year"}
-      onclick={() => (viewMode = "year")}
+      onclick={() => handleViewChange("year")}
     >
       Year View
     </button>
@@ -78,10 +116,10 @@
 
   {#if viewMode === "date"}
     <div class="mode-toggle">
-      <button class:selected={mode === "week"} onclick={() => (mode = "week")}>
+      <button class:selected={mode === "week"} onclick={() => handleModeChange("week")}>
         Week Mode
       </button>
-      <button class:selected={mode === "day"} onclick={() => (mode = "day")}>
+      <button class:selected={mode === "day"} onclick={() => handleModeChange("day")}>
         Day Mode
       </button>
     </div>
