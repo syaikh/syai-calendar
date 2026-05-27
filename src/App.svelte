@@ -14,12 +14,20 @@
     new Date().getDate(),
   );
 
-  const getWeekRange = (date: CalendarDate): { start: CalendarDate; end: CalendarDate } => {
+  const getWeekRange = (date: CalendarDate, maxVal?: CalendarDate): { start: CalendarDate; end: CalendarDate } => {
     const jsDate = new Date(date.year, date.month - 1, date.day);
     const dayOfWeek = jsDate.getDay();
     const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-    const weekStart = date.subtract({ days: daysToMonday });
-    const weekEnd = weekStart.add({ days: 6 });
+    let weekStart = date.subtract({ days: daysToMonday });
+    let weekEnd = weekStart.add({ days: 6 });
+    
+    // Clamp to maxValue if provided
+    if (maxVal) {
+      if (weekEnd.compare(maxVal) > 0) {
+        weekEnd = maxVal;
+      }
+    }
+    
     return { start: weekStart, end: weekEnd };
   };
 
@@ -37,7 +45,7 @@
   const handleViewChange = (newViewMode: "date" | "month" | "year") => {
     viewMode = newViewMode;
     if (viewMode === "date") {
-      selectedRange = mode === "day" ? { start: today, end: today } : getWeekRange(today);
+      selectedRange = mode === "day" ? { start: today, end: today } : getWeekRange(today, today);
     } else if (viewMode === "month") {
       selectedRange = getMonthRange(today.year, today.month);
     } else if (viewMode === "year") {
@@ -48,7 +56,7 @@
   const handleModeChange = (newMode: "day" | "week") => {
     mode = newMode;
     if (viewMode === "date") {
-      selectedRange = mode === "day" ? { start: today, end: today } : getWeekRange(today);
+      selectedRange = mode === "day" ? { start: today, end: today } : getWeekRange(today, today);
     }
   };
 
