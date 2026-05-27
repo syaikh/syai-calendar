@@ -83,7 +83,7 @@
     const disabled = isMonthDisabled(month);
 
     return cn(
-      "w-16 h-12 m-1 flex items-center justify-center text-sm rounded transition-colors",
+      "w-12 h-10 m-1 flex items-center justify-center text-sm rounded transition-colors",
       // Selected takes priority - always show with selected text regardless of disabled
       selected && "bg-[var(--calendar-selected)] text-[var(--calendar-selected-text)]",
       // Then disabled (not selected)

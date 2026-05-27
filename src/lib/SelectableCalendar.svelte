@@ -167,7 +167,7 @@
     const isSelectedEnd = selected && value && date.compare(value.end) === 0;
 
     return cn(
-      "relative w-8 h-8 text-center text-sm transition-colors",
+      "relative w-10 h-10 text-center text-sm transition-colors",
       // Selected takes priority - always show with selected text
       selected && "bg-[var(--calendar-selected)] text-[var(--calendar-selected-text)]",
       // Then hover (not selected)
@@ -207,12 +207,12 @@
     maxValue={maxValue ?? defaultMaxValue}
     disabled={false}
     weekStartsOn={1}
-    class="p-3"
+    class="p-4 rounded-lg"
     style={getThemeStyle(theme)}
     disableDaysOutsideMonth={false}
   >
     {#snippet children({ months })}
-      <Calendar.Header class="flex items-center justify-between mb-2">
+      <Calendar.Header class="flex items-center justify-between mb-3">
         <Calendar.PrevButton
           class="inline-flex items-center justify-center rounded-md p-1 text-[var(--calendar-text)] hover:bg-[var(--calendar-hover)] transition-colors"
         >
@@ -226,12 +226,12 @@
         </Calendar.NextButton>
       </Calendar.Header>
 
-      <Calendar.Grid class="border-collapse">
+      <Calendar.Grid class="border-collapse gap-1">
         <Calendar.GridHead>
           <Calendar.GridRow>
             {#each ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as day}
               <Calendar.HeadCell
-                class="w-8 h-8 text-center text-xs font-medium text-[var(--calendar-muted)]"
+                class="w-10 h-10 text-center text-xs font-medium text-[var(--calendar-muted)]"
               >
                 {day}
               </Calendar.HeadCell>
