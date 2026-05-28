@@ -10,10 +10,9 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
-    },
-    "./*": "./dist/*"
+    }
   },
-  "files": ["dist", "README.md", "LICENSE"],
+  "files": ["dist/index.js", "dist/index.js.map", "README.md", "LICENSE"],
   "peerDependencies": {
     "svelte": "^5.0.0",
     "@internationalized/date": "^3.0.0",
